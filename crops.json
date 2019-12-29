@@ -1,0 +1,194 @@
+[
+    {
+        "name": "Lettuce",
+        "cost": 15,
+        "time": 10,
+        "sale_price": 30
+    },
+    {
+        "name": "Corn",
+        "cost": 2000,
+        "time": 2880,
+        "sale_price": 3080
+    },
+    {
+        "name": "Sunflower",
+        "cost": 1500,
+        "time": 480,
+        "sale_price": 2200
+    },
+    {
+        "name": "Strawberry",
+        "cost": 800,
+        "time": 2160,
+        "sale_price": 1500
+    },
+    {
+        "name": "Watermelon",
+        "cost": 250,
+        "time": 2880,
+        "sale_price": 800
+    },
+    {
+        "name": "Wheat",
+        "cost": 400,
+        "time": 1440,
+        "sale_price": 800
+    },
+    {
+        "name": "Beet",
+        "cost": 800,
+        "time": 360,
+        "sale_price": 1180
+    },
+    {
+        "name": "Leek",
+        "cost": 1250,
+        "time": 45,
+        "sale_price": 1380
+    },
+    {
+        "name": "Pumpkin",
+        "cost": 100,
+        "time": 2880,
+        "sale_price": 400
+    },
+    {
+        "name": "Leek",
+        "cost": 1250,
+        "time": 45,
+        "sale_price": 1380
+    },
+    {
+        "name": "Red Onion",
+        "cost": 440,
+        "time": 300,
+        "sale_price": 560
+    },
+    {
+        "name": "Garlic",
+        "cost": 300,
+        "time": 210,
+        "sale_price": 400
+    },
+    {
+        "name": "Peas",
+        "cost": 180,
+        "time": 480,
+        "sale_price": 280
+    },
+    {
+        "name": "Cotton",
+        "cost": 100,
+        "time": 720,
+        "sale_price": 190
+    },
+    {
+        "name": "Yellow Zucchini",
+        "cost": 850,
+        "time": 15,
+        "sale_price": 920
+    },
+    {
+        "name": "Aloe Vera",
+        "cost": 220,
+        "time": 240,
+        "sale_price": 280
+    },
+    {
+        "name": "Asparagus",
+        "cost": 840,
+        "time": 60,
+        "sale_price": 900
+    },
+    {
+        "name": "Potato",
+        "cost": 60,
+        "time": 180,
+        "sale_price": 120
+    },
+    {
+        "name": "Blackberry",
+        "cost": 220,
+        "time": 240,
+        "sale_price": 280
+    },
+    {
+        "name": "Yellow Pepper",
+        "cost": 125,
+        "time": 90,
+        "sale_price": 180
+    },
+    {
+        "name": "Tomato",
+        "cost": 105,
+        "time": 120,
+        "sale_price": 160
+    },
+    {
+        "name": "Melon",
+        "cost": 1000,
+        "time": 10,
+        "sale_price": 1050
+    },
+    {
+        "name": "Califlower",
+        "cost": 260,
+        "time": 45,
+        "sale_price": 310
+    },
+    {
+        "name": "Parasol Mushroom",
+        "cost": 170,
+        "time": 60,
+        "sale_price": 220
+    },
+    {
+        "name": "Blue Grape",
+        "cost": 50,
+        "time": 360,
+        "sale_price": 100
+    },
+    {
+        "name": "Beans",
+        "cost": 200,
+        "time": 30,
+        "sale_price": 240
+    },
+    {
+        "name": "Cabbage",
+        "cost": 100,
+        "time": 45,
+        "sale_price": 140
+    },
+    {
+        "name": "Zucchini",
+        "cost": 120,
+        "time": 15,
+        "sale_price": 150
+    },
+    {
+        "name": "Turnip",
+        "cost": 200,
+        "time": 10,
+        "sale_price": 225
+    },
+    {
+        "name": "Carrot",
+        "cost": 35,
+        "time": 20,
+        "sale_price": 60
+    },
+    {
+        "name": "Peanut",
+        "cost": 40,
+        "time": 30,
+        "sale_price": 60
+    },
+    {
+        "name": "Eggplant",
+        "cost": 80,
+        "time": 1440,
+        "sale_price": 240
+    }
+]
