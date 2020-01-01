@@ -40,15 +40,6 @@ pub struct Crop {
 }
 
 impl Crop {
-    fn new(name: String, cost: u32, time: u32, sale_price: u32)
-    -> Self {
-        Self {
-            name,
-            cost,
-            time,
-            sale_price,
-        }
-    }
     pub fn from_json(json_data: &str) -> Result<Vec<Crop>, SerdeError> {
         serde_json::from_str(json_data)
     }
