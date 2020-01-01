@@ -1,8 +1,20 @@
 use std::fs;
 use std::error::Error;
+use structopt::StructOpt;
 use serde::Deserialize;
 use serde_json::error::Error as SerdeError;
 
+#[derive(StructOpt)]
+#[structopt(
+    name = "Farm Together Calculator",
+    about = "A tool to caluclate the best crop to plant, ready to harvest in the given amount of time."
+)]
+struct Config {
+    #[structopt(help = "Amount of money you can use for planting the crops")]
+    money: u32,
+    #[structopt(help = "Duration in minutes. After this duration your crops will be ready to harvest")]
+    time: u32,
+}
 
 pub struct Farm {
     crops: Vec<Crop>
@@ -163,9 +175,11 @@ mod test {
     }
 }
 
-    let crops = crops::load_from_json(&crops_contents)?;
+pub fn run() -> Result<(), Box<dyn Error>> {
+    let farm = Farm::from_json()?;
+    let config = Config::from_args();
 
-    let crops = Crop::filter_by_efficiency(&crops, time, money);
+    let crops = Crop::filter_by_efficiency(&farm.crops, config.time, config.money);
 
     for crop in crops {
         println!("Crop: {}\nCount: {}\nProfit: {}\n",
