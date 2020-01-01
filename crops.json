@@ -42,12 +42,6 @@
         "sale_price": 1180
     },
     {
-        "name": "Leek",
-        "cost": 1250,
-        "time": 45,
-        "sale_price": 1380
-    },
-    {
         "name": "Pumpkin",
         "cost": 100,
         "time": 2880,

@@ -1,58 +1,61 @@
-use std::error::Error;
 use std::fs;
+use std::error::Error;
+use structopt::StructOpt;
+use serde::Deserialize;
+use serde_json::error::Error as SerdeError;
 
-mod crops {
-    use serde::Deserialize;
-    use serde_json::error::Error as SerdeError;
+#[derive(StructOpt)]
+#[structopt(
+    name = "Farm Together Calculator",
+    about = "A tool to caluclate the best crop to plant, ready to harvest in the given amount of time."
+)]
+struct Config {
+    #[structopt(help = "Amount of money you can use for planting the crops")]
+    money: u32,
+    #[structopt(help = "Duration in minutes. After this duration your crops will be ready to harvest")]
+    time: u32,
+}
 
-    #[derive(Deserialize, Debug)]
-    pub struct Crop {
-        name: String,
-        cost: u32,
-        time: u32,
-        sale_price: u32,
-    }
+pub struct Farm {
+    crops: Vec<Crop>
+}
 
-    impl Crop {
-        fn new(name: String, cost: u32, time: u32, sale_price: u32)
-        -> Self {
-            Self {
-                name,
-                cost,
-                time,
-                sale_price,
+impl Farm {
+    pub fn from_json() -> Result<Farm, Box<dyn Error>> {
+        let crops_contents = fs::read_to_string("crops.json")?;
+        Ok(
+            Farm {
+                crops: Crop::from_json(&crops_contents)?
             }
-        }
-        pub fn name<'a>(&'a self) -> &'a str {
-            &self.name
-        }
-        pub fn cost<'a>(&'a self) -> &'a u32 {
-            &self.cost
-        }
-        pub fn time<'a>(&'a self) -> &'a u32 {
-            &self.time
-        }
-        pub fn sale_price<'a>(&'a self) -> &'a u32 {
-            &self.sale_price
-        }
+        )
     }
+}
 
-    impl PartialEq for Crop {
-        fn eq(&self, other: &Self) -> bool {
-            self.name == other.name &&
-            self.cost == other.cost &&
-            self.time == other.time &&
-            self.sale_price == other.sale_price
-        }
-    }
+#[derive(Deserialize, Debug)]
+pub struct Crop {
+    name: String,
+    cost: u32,
+    time: u32,
+    sale_price: u32,
+}
 
-    const PLOW_COST: u32 = 10;
-
-    pub fn load_from_json(json_data: &str) -> Result<Vec<Crop>, SerdeError> {
+impl Crop {
+    pub fn from_json(json_data: &str) -> Result<Vec<Crop>, SerdeError> {
         serde_json::from_str(json_data)
     }
-
-    pub fn get_by_efficiency(crops: &Vec<Crop>, time: u32, money: u32) -> Vec<(&Crop, u32, u32)> {
+    pub fn name<'a>(&'a self) -> &'a str {
+        &self.name
+    }
+    pub fn cost<'a>(&'a self) -> &'a u32 {
+        &self.cost
+    }
+    pub fn time<'a>(&'a self) -> &'a u32 {
+        &self.time
+    }
+    pub fn sale_price<'a>(&'a self) -> &'a u32 {
+        &self.sale_price
+    }
+    pub fn filter_by_efficiency(crops: &Vec<Crop>, time: u32, money: u32) -> Vec<(&Crop, u32, u32)> {
         let mut viable_crops: Vec<(&Crop, u32, u32)> = crops.into_iter()
                                 .filter(|x| x.time <= time && x.cost <= money)
                                 // Add how many we can buy:
@@ -69,93 +72,105 @@ mod crops {
         viable_crops
     }
 
-    pub fn get_highest_sale_price(crops: &Vec<Crop>) -> &Crop {
-        let mut highest = &crops[0];
+}
 
-        for crop in crops.iter() {
-            if crop.sale_price > highest.sale_price {
-                highest = crop;
-            }
-        }
-       &highest
-    }
-
-    #[cfg(test)]
-    mod test {
-        // Load (parent) library code
-        use super::*;
-        use std::error::Error;
-
-        const JSON_TEST_DATA: &str = r#"[
-            {
-                "name": "Lettuce",
-                "cost": 15,
-                "time": 10,
-                "sale_price": 30
-            },
-            {
-                "name": "Leek",
-                "cost": 1250,
-                "time": 45,
-                "sale_price": 1380
-            }
-        ]"#;
-
-        fn get_test_crops() -> Vec<Crop> {
-            vec![
-                Crop {
-                    name: String::from("Lettuce"),
-                    cost: 15,
-                    time: 10,
-                    sale_price: 30,
-                },
-                Crop {
-                    name: String::from("Leek"),
-                    cost: 1250,
-                    time: 45,
-                    sale_price: 1380,
-                }
-            ]
-        }
-
-        #[test]
-        fn config_loaded_from_json() -> Result<(), Box<dyn Error>> {
-            let test_crops = get_test_crops();
-            let loaded_crops = load_from_json(JSON_TEST_DATA)?;
-
-            let crops = test_crops.iter().zip(loaded_crops.iter());
-
-            for crop in crops {
-                assert_eq!(crop.0, crop.1);
-            }
-
-            Ok(())
-
-        }
-
-        #[test]
-        fn highest_sale_price_is_correct() {
-            let test_crops = get_test_crops();
-            let expected_highest = &test_crops[1];
-            let actual_highest = get_highest_sale_price(&test_crops);
-            assert_eq!(actual_highest, expected_highest);
-        }
-
-        #[test]
-        fn most_efficient_crop_is_selected() {
-            let test_crops = get_test_crops();
-            let most_efficient_crops = get_by_efficiency(&test_crops, 20, 200);
-            assert_eq!(most_efficient_crops.len(), 1);
-            assert_eq!(most_efficient_crops[0].0, &test_crops[0]);
-        }
+impl PartialEq for Crop {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name &&
+        self.cost == other.cost &&
+        self.time == other.time &&
+        self.sale_price == other.sale_price
     }
 }
 
-pub fn run(money: u32, time: u32) -> Result<(), Box<dyn Error>> {
-    let crops_contents = fs::read_to_string("crops.json")?;
-    let crops = crops::load_from_json(&crops_contents)?;
+const PLOW_COST: u32 = 10;
 
-    let crops = crops::get_by_efficiency(&crops, time, money);
+pub fn get_highest_sale_price(crops: &Vec<Crop>) -> &Crop {
+    let mut highest = &crops[0];
+
+    for crop in crops.iter() {
+        if crop.sale_price > highest.sale_price {
+            highest = crop;
+        }
+    }
+    &highest
+}
+
+#[cfg(test)]
+mod test {
+    // Load (parent) library code
+    use super::*;
+    use std::error::Error;
+
+    const JSON_TEST_DATA: &str = r#"[
+        {
+            "name": "Lettuce",
+            "cost": 15,
+            "time": 10,
+            "sale_price": 30
+        },
+        {
+            "name": "Leek",
+            "cost": 1250,
+            "time": 45,
+            "sale_price": 1380
+        }
+    ]"#;
+
+    fn get_test_crops() -> Vec<Crop> {
+        vec![
+            Crop {
+                name: String::from("Lettuce"),
+                cost: 15,
+                time: 10,
+                sale_price: 30,
+            },
+            Crop {
+                name: String::from("Leek"),
+                cost: 1250,
+                time: 45,
+                sale_price: 1380,
+            }
+        ]
+    }
+
+    #[test]
+    fn config_loaded_from_json() -> Result<(), Box<dyn Error>> {
+        let test_crops = get_test_crops();
+        let loaded_crops = Crop::from_json(JSON_TEST_DATA)?;
+
+        let crops = test_crops.iter().zip(loaded_crops.iter());
+
+        for crop in crops {
+            assert_eq!(crop.0, crop.1);
+        }
+
+        Ok(())
+
+    }
+
+    #[test]
+    fn highest_sale_price_is_correct() {
+        let test_crops = get_test_crops();
+        let expected_highest = &test_crops[1];
+        let actual_highest = get_highest_sale_price(&test_crops);
+        assert_eq!(actual_highest, expected_highest);
+    }
+
+    #[test]
+    fn most_efficient_crop_is_selected() {
+        let test_crops = get_test_crops();
+        let most_efficient_crops = Crop::filter_by_efficiency(&test_crops, 20, 200);
+        assert_eq!(most_efficient_crops.len(), 1);
+        assert_eq!(most_efficient_crops[0].0, &test_crops[0]);
+    }
+}
+
+pub fn run() -> Result<(), Box<dyn Error>> {
+    let farm = Farm::from_json()?;
+    let config = Config::from_args();
+
+    let crops = Crop::filter_by_efficiency(&farm.crops, config.time, config.money);
 
     for crop in crops {
         println!("Crop: {}\nCount: {}\nProfit: {}\n",
