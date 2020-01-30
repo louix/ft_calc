@@ -43,25 +43,25 @@ impl Crop {
     pub fn from_json(json_data: &str) -> Result<Vec<Crop>, SerdeError> {
         serde_json::from_str(json_data)
     }
-    pub fn name<'a>(&'a self) -> &'a str {
+    pub fn name(&self) -> &str {
         &self.name
     }
-    pub fn cost<'a>(&'a self) -> &'a u32 {
+    pub fn cost(&self) -> &u32 {
         &self.cost
     }
-    pub fn time<'a>(&'a self) -> &'a u32 {
+    pub fn time(&self) -> &u32 {
         &self.time
     }
-    pub fn sale_price<'a>(&'a self) -> &'a u32 {
+    pub fn sale_price(&self) -> &u32 {
         &self.sale_price
     }
-    pub fn filter_by_efficiency(crops: &Vec<Crop>, time: u32, money: u32) -> Vec<(&Crop, u32, u32)> {
-        let mut viable_crops: Vec<(&Crop, u32, u32)> = crops.into_iter()
+    pub fn filter_by_efficiency(crops: &[Crop], time: u32, money: u32) -> Vec<(&Crop, u32, u32)> {
+        let mut viable_crops: Vec<(&Crop, u32, u32)> = crops.iter()
                                 .filter(|x| x.time <= time && x.cost <= money)
                                 // Add how many we can buy:
                                 .map(|x| {
                                     let mut purchaseable_amount = money / (x.cost + PLOW_COST);
-                                    if purchaseable_amount > 200 { purchaseable_amount = 200 };
+                                    if purchaseable_amount > MAX_CROP_COUNT { purchaseable_amount = MAX_CROP_COUNT };
                                     let profit = (x.sale_price - x.cost - PLOW_COST) * purchaseable_amount;
                                     (x, purchaseable_amount, profit)
                                 })
@@ -72,6 +72,16 @@ impl Crop {
         viable_crops
     }
 
+    pub fn get_highest_sale_price(crops: &[Crop]) -> &Crop {
+        let mut highest = &crops[0];
+
+        for crop in crops.iter() {
+            if crop.sale_price > highest.sale_price {
+                highest = crop;
+            }
+        }
+        &highest
+    }
 }
 
 impl PartialEq for Crop {
@@ -84,17 +94,7 @@ impl PartialEq for Crop {
 }
 
 const PLOW_COST: u32 = 10;
-
-pub fn get_highest_sale_price(crops: &Vec<Crop>) -> &Crop {
-    let mut highest = &crops[0];
-
-    for crop in crops.iter() {
-        if crop.sale_price > highest.sale_price {
-            highest = crop;
-        }
-    }
-    &highest
-}
+const MAX_CROP_COUNT: u32 = 200;
 
 #[cfg(test)]
 mod test {
@@ -153,7 +153,7 @@ mod test {
     fn highest_sale_price_is_correct() {
         let test_crops = get_test_crops();
         let expected_highest = &test_crops[1];
-        let actual_highest = get_highest_sale_price(&test_crops);
+        let actual_highest = Crop::get_highest_sale_price(&test_crops);
         assert_eq!(actual_highest, expected_highest);
     }
 
