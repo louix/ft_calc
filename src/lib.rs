@@ -94,7 +94,7 @@ impl PartialEq for Crop {
 }
 
 const PLOW_COST: u32 = 10;
-const MAX_CROP_COUNT = 200;
+const MAX_CROP_COUNT: u32 = 200;
 
 #[cfg(test)]
 mod test {
