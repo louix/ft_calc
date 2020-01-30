@@ -61,7 +61,7 @@ impl Crop {
                                 // Add how many we can buy:
                                 .map(|x| {
                                     let mut purchaseable_amount = money / (x.cost + PLOW_COST);
-                                    if purchaseable_amount > 200 { purchaseable_amount = 200 };
+                                    if purchaseable_amount > MAX_CROP_COUNT { purchaseable_amount = MAX_CROP_COUNT };
                                     let profit = (x.sale_price - x.cost - PLOW_COST) * purchaseable_amount;
                                     (x, purchaseable_amount, profit)
                                 })
@@ -94,6 +94,7 @@ impl PartialEq for Crop {
 }
 
 const PLOW_COST: u32 = 10;
+const MAX_CROP_COUNT = 200;
 
 #[cfg(test)]
 mod test {
